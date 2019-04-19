@@ -1,0 +1,25 @@
+type Parent {
+  id: ID! @id @unique
+  name: String!
+  email: String!
+  username: String! @unique
+  password: String!
+  pin: String!
+  img_url: String!
+}
+
+type Child {
+  id: ID! @id @unique
+  name: String!
+  pet_name: String!
+  pet_experience: Int!
+  parent: Parent @relation(link: INLINE)
+}
+
+type FoodEntry {
+  id: ID! @id @unique
+  name: String!
+  meal: String!
+  pet_experience: Int!
+  parent: Parent @relation(link: INLINE)
+}

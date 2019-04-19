@@ -1,0 +1,6 @@
+endpoint: https://eu1.prisma.sh/matt-hardman-b2ba69/gigapet/dev
+datamodel: datamodel.prisma
+
+generate:
+  - generator: javascript-client
+    output: ./generated/prisma-client/
