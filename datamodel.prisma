@@ -11,6 +11,8 @@ type Pet {
 
 type Parent {
   id: ID! @id @unique
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   name: String!
   email: String!
   username: String! @unique
@@ -22,6 +24,8 @@ type Parent {
 
 type Child {
   id: ID! @id @unique
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   name: String!
   pet_id: Pet
   pet_name: String!
@@ -32,6 +36,8 @@ type Child {
 
 type FoodEntry {
   id: ID! @id @unique
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   name: String!
   meal: String!
   category: String!

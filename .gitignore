@@ -58,9 +58,8 @@ typings/
 # dotenv environment variables file
 .env
 
-# next.js build output
-.next
+#now
+now.json
 
-#db 
-# /data/test.sqlite3
-# /data/gigapet.sqlite3
+
+
