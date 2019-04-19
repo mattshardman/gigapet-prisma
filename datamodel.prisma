@@ -20,6 +20,8 @@ type FoodEntry {
   id: ID! @id @unique
   name: String!
   meal: String!
-  pet_experience: Int!
-  parent: Parent @relation(link: INLINE)
+  category: String!
+  date_added: String!
+  date_updated: String!
+  child_id: Child @relation(link: INLINE)
 }
