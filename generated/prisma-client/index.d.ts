@@ -12,7 +12,9 @@ type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 
 export interface Exists {
   child: (where?: ChildWhereInput) => Promise<boolean>;
+  foodEntry: (where?: FoodEntryWhereInput) => Promise<boolean>;
   parent: (where?: ParentWhereInput) => Promise<boolean>;
+  pet: (where?: PetWhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -57,6 +59,29 @@ export interface Prisma {
       last?: Int;
     }
   ) => ChildConnection;
+  foodEntry: (where: FoodEntryWhereUniqueInput) => FoodEntry;
+  foodEntries: (
+    args?: {
+      where?: FoodEntryWhereInput;
+      orderBy?: FoodEntryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<FoodEntryNode>;
+  foodEntriesConnection: (
+    args?: {
+      where?: FoodEntryWhereInput;
+      orderBy?: FoodEntryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FoodEntryConnection;
   parent: (where: ParentWhereUniqueInput) => Parent;
   parents: (
     args?: {
@@ -80,6 +105,29 @@ export interface Prisma {
       last?: Int;
     }
   ) => ParentConnection;
+  pet: (where: PetWhereUniqueInput) => Pet;
+  pets: (
+    args?: {
+      where?: PetWhereInput;
+      orderBy?: PetOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<PetNode>;
+  petsConnection: (
+    args?: {
+      where?: PetWhereInput;
+      orderBy?: PetOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => PetConnection;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -102,6 +150,22 @@ export interface Prisma {
   ) => Child;
   deleteChild: (where: ChildWhereUniqueInput) => Child;
   deleteManyChildren: (where?: ChildWhereInput) => BatchPayload;
+  createFoodEntry: (data: FoodEntryCreateInput) => FoodEntry;
+  updateFoodEntry: (
+    args: { data: FoodEntryUpdateInput; where: FoodEntryWhereUniqueInput }
+  ) => FoodEntry;
+  updateManyFoodEntries: (
+    args: { data: FoodEntryUpdateInput; where?: FoodEntryWhereInput }
+  ) => BatchPayload;
+  upsertFoodEntry: (
+    args: {
+      where: FoodEntryWhereUniqueInput;
+      create: FoodEntryCreateInput;
+      update: FoodEntryUpdateInput;
+    }
+  ) => FoodEntry;
+  deleteFoodEntry: (where: FoodEntryWhereUniqueInput) => FoodEntry;
+  deleteManyFoodEntries: (where?: FoodEntryWhereInput) => BatchPayload;
   createParent: (data: ParentCreateInput) => Parent;
   updateParent: (
     args: { data: ParentUpdateInput; where: ParentWhereUniqueInput }
@@ -118,6 +182,22 @@ export interface Prisma {
   ) => Parent;
   deleteParent: (where: ParentWhereUniqueInput) => Parent;
   deleteManyParents: (where?: ParentWhereInput) => BatchPayload;
+  createPet: (data: PetCreateInput) => Pet;
+  updatePet: (
+    args: { data: PetUpdateInput; where: PetWhereUniqueInput }
+  ) => Pet;
+  updateManyPets: (
+    args: { data: PetUpdateInput; where?: PetWhereInput }
+  ) => BatchPayload;
+  upsertPet: (
+    args: {
+      where: PetWhereUniqueInput;
+      create: PetCreateInput;
+      update: PetUpdateInput;
+    }
+  ) => Pet;
+  deletePet: (where: PetWhereUniqueInput) => Pet;
+  deleteManyPets: (where?: PetWhereInput) => BatchPayload;
 
   /**
    * Subscriptions
@@ -130,9 +210,15 @@ export interface Subscription {
   child: (
     where?: ChildSubscriptionWhereInput
   ) => ChildSubscriptionPayloadSubscription;
+  foodEntry: (
+    where?: FoodEntrySubscriptionWhereInput
+  ) => FoodEntrySubscriptionPayloadSubscription;
   parent: (
     where?: ParentSubscriptionWhereInput
   ) => ParentSubscriptionPayloadSubscription;
+  pet: (
+    where?: PetSubscriptionWhereInput
+  ) => PetSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -152,6 +238,24 @@ export type ChildOrderByInput =
   | "pet_name_DESC"
   | "pet_experience_ASC"
   | "pet_experience_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type FoodEntryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "meal_ASC"
+  | "meal_DESC"
+  | "category_ASC"
+  | "category_DESC"
+  | "date_added_ASC"
+  | "date_added_DESC"
+  | "date_updated_ASC"
+  | "date_updated_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -177,26 +281,50 @@ export type ParentOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type PetOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "species_ASC"
+  | "species_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "happy_ASC"
+  | "happy_DESC"
+  | "ok_ASC"
+  | "ok_DESC"
+  | "sad_ASC"
+  | "sad_DESC"
+  | "sick_ASC"
+  | "sick_DESC"
+  | "eating_ASC"
+  | "eating_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface ParentUpdateDataInput {
+export interface ChildUpdateInput {
   name?: String;
-  email?: String;
-  username?: String;
-  password?: String;
-  pin?: String;
-  img_url?: String;
+  pet_id?: PetUpdateOneInput;
+  pet_name?: String;
+  pet_experience?: Int;
+  parent?: ParentUpdateOneWithoutChildrenInput;
+  foodEntries?: FoodEntryUpdateManyWithoutChildInput;
 }
 
 export type ChildWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface ChildUpdateInput {
-  name?: String;
-  pet_name?: String;
-  pet_experience?: Int;
-  parent?: ParentUpdateOneInput;
+export interface ParentUpdateOneWithoutChildrenInput {
+  create?: ParentCreateWithoutChildrenInput;
+  update?: ParentUpdateWithoutChildrenDataInput;
+  upsert?: ParentUpsertWithoutChildrenInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ParentWhereUniqueInput;
 }
 
 export interface ChildWhereInput {
@@ -228,6 +356,7 @@ export interface ChildWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
+  pet_id?: PetWhereInput;
   pet_name?: String;
   pet_name_not?: String;
   pet_name_in?: String[] | String;
@@ -251,60 +380,21 @@ export interface ChildWhereInput {
   pet_experience_gt?: Int;
   pet_experience_gte?: Int;
   parent?: ParentWhereInput;
+  foodEntries_every?: FoodEntryWhereInput;
+  foodEntries_some?: FoodEntryWhereInput;
+  foodEntries_none?: FoodEntryWhereInput;
   AND?: ChildWhereInput[] | ChildWhereInput;
   OR?: ChildWhereInput[] | ChildWhereInput;
   NOT?: ChildWhereInput[] | ChildWhereInput;
 }
 
-export interface ParentCreateInput {
-  name: String;
-  email: String;
-  username: String;
-  password: String;
-  pin: String;
-  img_url: String;
-}
-
-export interface ParentUpdateInput {
+export interface ParentUpdateWithoutChildrenDataInput {
   name?: String;
   email?: String;
   username?: String;
   password?: String;
   pin?: String;
   img_url?: String;
-}
-
-export interface ChildCreateInput {
-  name: String;
-  pet_name: String;
-  pet_experience: Int;
-  parent?: ParentCreateOneInput;
-}
-
-export interface ParentCreateOneInput {
-  create?: ParentCreateInput;
-  connect?: ParentWhereUniqueInput;
-}
-
-export interface ChildSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: ChildWhereInput;
-  AND?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
-  OR?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
-  NOT?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
-}
-
-export type ParentWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  username?: String;
-}>;
-
-export interface ParentUpsertNestedInput {
-  update: ParentUpdateDataInput;
-  create: ParentCreateInput;
 }
 
 export interface ParentWhereInput {
@@ -406,18 +496,35 @@ export interface ParentWhereInput {
   img_url_not_starts_with?: String;
   img_url_ends_with?: String;
   img_url_not_ends_with?: String;
+  children_every?: ChildWhereInput;
+  children_some?: ChildWhereInput;
+  children_none?: ChildWhereInput;
   AND?: ParentWhereInput[] | ParentWhereInput;
   OR?: ParentWhereInput[] | ParentWhereInput;
   NOT?: ParentWhereInput[] | ParentWhereInput;
 }
 
-export interface ParentUpdateOneInput {
-  create?: ParentCreateInput;
-  update?: ParentUpdateDataInput;
-  upsert?: ParentUpsertNestedInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: ParentWhereUniqueInput;
+export interface FoodEntryUpdateInput {
+  name?: String;
+  meal?: String;
+  category?: String;
+  date_added?: String;
+  date_updated?: String;
+  child?: ChildUpdateOneWithoutFoodEntriesInput;
+}
+
+export interface FoodEntryCreateInput {
+  name: String;
+  meal: String;
+  category: String;
+  date_added: String;
+  date_updated: String;
+  child?: ChildCreateOneWithoutFoodEntriesInput;
+}
+
+export interface ParentUpsertWithoutChildrenInput {
+  update: ParentUpdateWithoutChildrenDataInput;
+  create: ParentCreateWithoutChildrenInput;
 }
 
 export interface ParentSubscriptionWhereInput {
@@ -431,65 +538,633 @@ export interface ParentSubscriptionWhereInput {
   NOT?: ParentSubscriptionWhereInput[] | ParentSubscriptionWhereInput;
 }
 
+export interface ChildCreateInput {
+  name: String;
+  pet_id?: PetCreateOneInput;
+  pet_name: String;
+  pet_experience: Int;
+  parent?: ParentCreateOneWithoutChildrenInput;
+  foodEntries?: FoodEntryCreateManyWithoutChildInput;
+}
+
+export interface ChildSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: ChildWhereInput;
+  AND?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
+  OR?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
+  NOT?: ChildSubscriptionWhereInput[] | ChildSubscriptionWhereInput;
+}
+
+export interface PetCreateOneInput {
+  create?: PetCreateInput;
+  connect?: PetWhereUniqueInput;
+}
+
+export interface ChildUpsertWithWhereUniqueWithoutParentInput {
+  where: ChildWhereUniqueInput;
+  update: ChildUpdateWithoutParentDataInput;
+  create: ChildCreateWithoutParentInput;
+}
+
+export interface PetCreateInput {
+  species: String;
+  description: String;
+  happy: String;
+  ok: String;
+  sad: String;
+  sick: String;
+  eating: String;
+}
+
+export interface ChildUpdateWithoutParentDataInput {
+  name?: String;
+  pet_id?: PetUpdateOneInput;
+  pet_name?: String;
+  pet_experience?: Int;
+  foodEntries?: FoodEntryUpdateManyWithoutChildInput;
+}
+
+export interface ParentCreateOneWithoutChildrenInput {
+  create?: ParentCreateWithoutChildrenInput;
+  connect?: ParentWhereUniqueInput;
+}
+
+export interface ChildUpdateManyWithoutParentInput {
+  create?: ChildCreateWithoutParentInput[] | ChildCreateWithoutParentInput;
+  delete?: ChildWhereUniqueInput[] | ChildWhereUniqueInput;
+  connect?: ChildWhereUniqueInput[] | ChildWhereUniqueInput;
+  disconnect?: ChildWhereUniqueInput[] | ChildWhereUniqueInput;
+  update?:
+    | ChildUpdateWithWhereUniqueWithoutParentInput[]
+    | ChildUpdateWithWhereUniqueWithoutParentInput;
+  upsert?:
+    | ChildUpsertWithWhereUniqueWithoutParentInput[]
+    | ChildUpsertWithWhereUniqueWithoutParentInput;
+}
+
+export interface ParentCreateWithoutChildrenInput {
+  name: String;
+  email: String;
+  username: String;
+  password: String;
+  pin: String;
+  img_url: String;
+}
+
+export interface ParentUpdateInput {
+  name?: String;
+  email?: String;
+  username?: String;
+  password?: String;
+  pin?: String;
+  img_url?: String;
+  children?: ChildUpdateManyWithoutParentInput;
+}
+
+export interface FoodEntryCreateManyWithoutChildInput {
+  create?:
+    | FoodEntryCreateWithoutChildInput[]
+    | FoodEntryCreateWithoutChildInput;
+  connect?: FoodEntryWhereUniqueInput[] | FoodEntryWhereUniqueInput;
+}
+
+export interface ChildCreateManyWithoutParentInput {
+  create?: ChildCreateWithoutParentInput[] | ChildCreateWithoutParentInput;
+  connect?: ChildWhereUniqueInput[] | ChildWhereUniqueInput;
+}
+
+export interface FoodEntryCreateWithoutChildInput {
+  name: String;
+  meal: String;
+  category: String;
+  date_added: String;
+  date_updated: String;
+}
+
+export type PetWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  happy?: String;
+}>;
+
+export interface ChildCreateWithoutFoodEntriesInput {
+  name: String;
+  pet_id?: PetCreateOneInput;
+  pet_name: String;
+  pet_experience: Int;
+  parent?: ParentCreateOneWithoutChildrenInput;
+}
+
+export interface ChildUpdateWithoutFoodEntriesDataInput {
+  name?: String;
+  pet_id?: PetUpdateOneInput;
+  pet_name?: String;
+  pet_experience?: Int;
+  parent?: ParentUpdateOneWithoutChildrenInput;
+}
+
+export interface PetUpdateOneInput {
+  create?: PetCreateInput;
+  update?: PetUpdateDataInput;
+  upsert?: PetUpsertNestedInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: PetWhereUniqueInput;
+}
+
+export interface PetSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: PetWhereInput;
+  AND?: PetSubscriptionWhereInput[] | PetSubscriptionWhereInput;
+  OR?: PetSubscriptionWhereInput[] | PetSubscriptionWhereInput;
+  NOT?: PetSubscriptionWhereInput[] | PetSubscriptionWhereInput;
+}
+
+export interface PetUpdateDataInput {
+  species?: String;
+  description?: String;
+  happy?: String;
+  ok?: String;
+  sad?: String;
+  sick?: String;
+  eating?: String;
+}
+
+export interface PetUpdateInput {
+  species?: String;
+  description?: String;
+  happy?: String;
+  ok?: String;
+  sad?: String;
+  sick?: String;
+  eating?: String;
+}
+
+export interface PetUpsertNestedInput {
+  update: PetUpdateDataInput;
+  create: PetCreateInput;
+}
+
+export interface ChildUpdateWithWhereUniqueWithoutParentInput {
+  where: ChildWhereUniqueInput;
+  data: ChildUpdateWithoutParentDataInput;
+}
+
+export interface PetWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  species?: String;
+  species_not?: String;
+  species_in?: String[] | String;
+  species_not_in?: String[] | String;
+  species_lt?: String;
+  species_lte?: String;
+  species_gt?: String;
+  species_gte?: String;
+  species_contains?: String;
+  species_not_contains?: String;
+  species_starts_with?: String;
+  species_not_starts_with?: String;
+  species_ends_with?: String;
+  species_not_ends_with?: String;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  happy?: String;
+  happy_not?: String;
+  happy_in?: String[] | String;
+  happy_not_in?: String[] | String;
+  happy_lt?: String;
+  happy_lte?: String;
+  happy_gt?: String;
+  happy_gte?: String;
+  happy_contains?: String;
+  happy_not_contains?: String;
+  happy_starts_with?: String;
+  happy_not_starts_with?: String;
+  happy_ends_with?: String;
+  happy_not_ends_with?: String;
+  ok?: String;
+  ok_not?: String;
+  ok_in?: String[] | String;
+  ok_not_in?: String[] | String;
+  ok_lt?: String;
+  ok_lte?: String;
+  ok_gt?: String;
+  ok_gte?: String;
+  ok_contains?: String;
+  ok_not_contains?: String;
+  ok_starts_with?: String;
+  ok_not_starts_with?: String;
+  ok_ends_with?: String;
+  ok_not_ends_with?: String;
+  sad?: String;
+  sad_not?: String;
+  sad_in?: String[] | String;
+  sad_not_in?: String[] | String;
+  sad_lt?: String;
+  sad_lte?: String;
+  sad_gt?: String;
+  sad_gte?: String;
+  sad_contains?: String;
+  sad_not_contains?: String;
+  sad_starts_with?: String;
+  sad_not_starts_with?: String;
+  sad_ends_with?: String;
+  sad_not_ends_with?: String;
+  sick?: String;
+  sick_not?: String;
+  sick_in?: String[] | String;
+  sick_not_in?: String[] | String;
+  sick_lt?: String;
+  sick_lte?: String;
+  sick_gt?: String;
+  sick_gte?: String;
+  sick_contains?: String;
+  sick_not_contains?: String;
+  sick_starts_with?: String;
+  sick_not_starts_with?: String;
+  sick_ends_with?: String;
+  sick_not_ends_with?: String;
+  eating?: String;
+  eating_not?: String;
+  eating_in?: String[] | String;
+  eating_not_in?: String[] | String;
+  eating_lt?: String;
+  eating_lte?: String;
+  eating_gt?: String;
+  eating_gte?: String;
+  eating_contains?: String;
+  eating_not_contains?: String;
+  eating_starts_with?: String;
+  eating_not_starts_with?: String;
+  eating_ends_with?: String;
+  eating_not_ends_with?: String;
+  AND?: PetWhereInput[] | PetWhereInput;
+  OR?: PetWhereInput[] | PetWhereInput;
+  NOT?: PetWhereInput[] | PetWhereInput;
+}
+
+export interface ChildCreateWithoutParentInput {
+  name: String;
+  pet_id?: PetCreateOneInput;
+  pet_name: String;
+  pet_experience: Int;
+  foodEntries?: FoodEntryCreateManyWithoutChildInput;
+}
+
+export interface FoodEntryWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  meal?: String;
+  meal_not?: String;
+  meal_in?: String[] | String;
+  meal_not_in?: String[] | String;
+  meal_lt?: String;
+  meal_lte?: String;
+  meal_gt?: String;
+  meal_gte?: String;
+  meal_contains?: String;
+  meal_not_contains?: String;
+  meal_starts_with?: String;
+  meal_not_starts_with?: String;
+  meal_ends_with?: String;
+  meal_not_ends_with?: String;
+  category?: String;
+  category_not?: String;
+  category_in?: String[] | String;
+  category_not_in?: String[] | String;
+  category_lt?: String;
+  category_lte?: String;
+  category_gt?: String;
+  category_gte?: String;
+  category_contains?: String;
+  category_not_contains?: String;
+  category_starts_with?: String;
+  category_not_starts_with?: String;
+  category_ends_with?: String;
+  category_not_ends_with?: String;
+  date_added?: String;
+  date_added_not?: String;
+  date_added_in?: String[] | String;
+  date_added_not_in?: String[] | String;
+  date_added_lt?: String;
+  date_added_lte?: String;
+  date_added_gt?: String;
+  date_added_gte?: String;
+  date_added_contains?: String;
+  date_added_not_contains?: String;
+  date_added_starts_with?: String;
+  date_added_not_starts_with?: String;
+  date_added_ends_with?: String;
+  date_added_not_ends_with?: String;
+  date_updated?: String;
+  date_updated_not?: String;
+  date_updated_in?: String[] | String;
+  date_updated_not_in?: String[] | String;
+  date_updated_lt?: String;
+  date_updated_lte?: String;
+  date_updated_gt?: String;
+  date_updated_gte?: String;
+  date_updated_contains?: String;
+  date_updated_not_contains?: String;
+  date_updated_starts_with?: String;
+  date_updated_not_starts_with?: String;
+  date_updated_ends_with?: String;
+  date_updated_not_ends_with?: String;
+  child?: ChildWhereInput;
+  AND?: FoodEntryWhereInput[] | FoodEntryWhereInput;
+  OR?: FoodEntryWhereInput[] | FoodEntryWhereInput;
+  NOT?: FoodEntryWhereInput[] | FoodEntryWhereInput;
+}
+
+export interface ChildUpsertWithoutFoodEntriesInput {
+  update: ChildUpdateWithoutFoodEntriesDataInput;
+  create: ChildCreateWithoutFoodEntriesInput;
+}
+
+export interface ChildCreateOneWithoutFoodEntriesInput {
+  create?: ChildCreateWithoutFoodEntriesInput;
+  connect?: ChildWhereUniqueInput;
+}
+
+export interface FoodEntrySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FoodEntryWhereInput;
+  AND?: FoodEntrySubscriptionWhereInput[] | FoodEntrySubscriptionWhereInput;
+  OR?: FoodEntrySubscriptionWhereInput[] | FoodEntrySubscriptionWhereInput;
+  NOT?: FoodEntrySubscriptionWhereInput[] | FoodEntrySubscriptionWhereInput;
+}
+
+export interface FoodEntryUpsertWithWhereUniqueWithoutChildInput {
+  where: FoodEntryWhereUniqueInput;
+  update: FoodEntryUpdateWithoutChildDataInput;
+  create: FoodEntryCreateWithoutChildInput;
+}
+
+export interface FoodEntryUpdateWithoutChildDataInput {
+  name?: String;
+  meal?: String;
+  category?: String;
+  date_added?: String;
+  date_updated?: String;
+}
+
+export interface FoodEntryUpdateWithWhereUniqueWithoutChildInput {
+  where: FoodEntryWhereUniqueInput;
+  data: FoodEntryUpdateWithoutChildDataInput;
+}
+
+export interface FoodEntryUpdateManyWithoutChildInput {
+  create?:
+    | FoodEntryCreateWithoutChildInput[]
+    | FoodEntryCreateWithoutChildInput;
+  delete?: FoodEntryWhereUniqueInput[] | FoodEntryWhereUniqueInput;
+  connect?: FoodEntryWhereUniqueInput[] | FoodEntryWhereUniqueInput;
+  disconnect?: FoodEntryWhereUniqueInput[] | FoodEntryWhereUniqueInput;
+  update?:
+    | FoodEntryUpdateWithWhereUniqueWithoutChildInput[]
+    | FoodEntryUpdateWithWhereUniqueWithoutChildInput;
+  upsert?:
+    | FoodEntryUpsertWithWhereUniqueWithoutChildInput[]
+    | FoodEntryUpsertWithWhereUniqueWithoutChildInput;
+}
+
+export type FoodEntryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface ChildUpdateOneWithoutFoodEntriesInput {
+  create?: ChildCreateWithoutFoodEntriesInput;
+  update?: ChildUpdateWithoutFoodEntriesDataInput;
+  upsert?: ChildUpsertWithoutFoodEntriesInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: ChildWhereUniqueInput;
+}
+
+export interface ParentCreateInput {
+  name: String;
+  email: String;
+  username: String;
+  password: String;
+  pin: String;
+  img_url: String;
+  children?: ChildCreateManyWithoutParentInput;
+}
+
+export type ParentWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  username?: String;
+}>;
+
 export interface NodeNode {
   id: ID_Output;
 }
 
-export interface AggregateParentNode {
+export interface PetPreviousValuesNode {
+  id: ID_Output;
+  species: String;
+  description: String;
+  happy: String;
+  ok: String;
+  sad: String;
+  sick: String;
+  eating: String;
+}
+
+export interface PetPreviousValues
+  extends Promise<PetPreviousValuesNode>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  species: () => Promise<String>;
+  description: () => Promise<String>;
+  happy: () => Promise<String>;
+  ok: () => Promise<String>;
+  sad: () => Promise<String>;
+  sick: () => Promise<String>;
+  eating: () => Promise<String>;
+}
+
+export interface PetPreviousValuesSubscription
+  extends Promise<AsyncIterator<PetPreviousValuesNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  species: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  happy: () => Promise<AsyncIterator<String>>;
+  ok: () => Promise<AsyncIterator<String>>;
+  sad: () => Promise<AsyncIterator<String>>;
+  sick: () => Promise<AsyncIterator<String>>;
+  eating: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateChildNode {
   count: Int;
 }
 
-export interface AggregateParent
-  extends Promise<AggregateParentNode>,
+export interface AggregateChild
+  extends Promise<AggregateChildNode>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateParentSubscription
-  extends Promise<AsyncIterator<AggregateParentNode>>,
+export interface AggregateChildSubscription
+  extends Promise<AsyncIterator<AggregateChildNode>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ChildConnectionNode {}
+export interface ParentNode {
+  id: ID_Output;
+  name: String;
+  email: String;
+  username: String;
+  password: String;
+  pin: String;
+  img_url: String;
+}
 
-export interface ChildConnection
-  extends Promise<ChildConnectionNode>,
+export interface Parent extends Promise<ParentNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  email: () => Promise<String>;
+  username: () => Promise<String>;
+  password: () => Promise<String>;
+  pin: () => Promise<String>;
+  img_url: () => Promise<String>;
+  children: <T = FragmentableArray<ChildNode>>(
+    args?: {
+      where?: ChildWhereInput;
+      orderBy?: ChildOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface ParentSubscription
+  extends Promise<AsyncIterator<ParentNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  username: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  pin: () => Promise<AsyncIterator<String>>;
+  img_url: () => Promise<AsyncIterator<String>>;
+  children: <T = Promise<AsyncIterator<ChildSubscription>>>(
+    args?: {
+      where?: ChildWhereInput;
+      orderBy?: ChildOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface FoodEntryConnectionNode {}
+
+export interface FoodEntryConnection
+  extends Promise<FoodEntryConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<ChildEdgeNode>>() => T;
-  aggregate: <T = AggregateChild>() => T;
+  edges: <T = FragmentableArray<FoodEntryEdgeNode>>() => T;
+  aggregate: <T = AggregateFoodEntry>() => T;
 }
 
-export interface ChildConnectionSubscription
-  extends Promise<AsyncIterator<ChildConnectionNode>>,
+export interface FoodEntryConnectionSubscription
+  extends Promise<AsyncIterator<FoodEntryConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ChildEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateChildSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FoodEntryEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFoodEntrySubscription>() => T;
 }
 
-export interface ChildSubscriptionPayloadNode {
+export interface ParentSubscriptionPayloadNode {
   mutation: MutationType;
   updatedFields?: String[];
 }
 
-export interface ChildSubscriptionPayload
-  extends Promise<ChildSubscriptionPayloadNode>,
+export interface ParentSubscriptionPayload
+  extends Promise<ParentSubscriptionPayloadNode>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = Child>() => T;
+  node: <T = Parent>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ChildPreviousValues>() => T;
+  previousValues: <T = ParentPreviousValues>() => T;
 }
 
-export interface ChildSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ChildSubscriptionPayloadNode>>,
+export interface ParentSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ParentSubscriptionPayloadNode>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ChildSubscription>() => T;
+  node: <T = ParentSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ChildPreviousValuesSubscription>() => T;
+  previousValues: <T = ParentPreviousValuesSubscription>() => T;
 }
 
 export interface BatchPayloadNode {
@@ -504,6 +1179,69 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayloadNode>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface ChildEdgeNode {
+  cursor: String;
+}
+
+export interface ChildEdge extends Promise<ChildEdgeNode>, Fragmentable {
+  node: <T = Child>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ChildEdgeSubscription
+  extends Promise<AsyncIterator<ChildEdgeNode>>,
+    Fragmentable {
+  node: <T = ChildSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FoodEntryNode {
+  id: ID_Output;
+  name: String;
+  meal: String;
+  category: String;
+  date_added: String;
+  date_updated: String;
+}
+
+export interface FoodEntry extends Promise<FoodEntryNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  meal: () => Promise<String>;
+  category: () => Promise<String>;
+  date_added: () => Promise<String>;
+  date_updated: () => Promise<String>;
+  child: <T = Child>() => T;
+}
+
+export interface FoodEntrySubscription
+  extends Promise<AsyncIterator<FoodEntryNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  meal: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  date_added: () => Promise<AsyncIterator<String>>;
+  date_updated: () => Promise<AsyncIterator<String>>;
+  child: <T = ChildSubscription>() => T;
+}
+
+export interface PetEdgeNode {
+  cursor: String;
+}
+
+export interface PetEdge extends Promise<PetEdgeNode>, Fragmentable {
+  node: <T = Pet>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PetEdgeSubscription
+  extends Promise<AsyncIterator<PetEdgeNode>>,
+    Fragmentable {
+  node: <T = PetSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ParentPreviousValuesNode {
@@ -540,20 +1278,150 @@ export interface ParentPreviousValuesSubscription
   img_url: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateChildNode {
-  count: Int;
+export interface PetSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
 }
 
-export interface AggregateChild
-  extends Promise<AggregateChildNode>,
+export interface PetSubscriptionPayload
+  extends Promise<PetSubscriptionPayloadNode>,
     Fragmentable {
-  count: () => Promise<Int>;
+  mutation: () => Promise<MutationType>;
+  node: <T = Pet>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PetPreviousValues>() => T;
 }
 
-export interface AggregateChildSubscription
-  extends Promise<AsyncIterator<AggregateChildNode>>,
+export interface PetSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PetSubscriptionPayloadNode>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PetSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PetPreviousValuesSubscription>() => T;
+}
+
+export interface ChildNode {
+  id: ID_Output;
+  name: String;
+  pet_name: String;
+  pet_experience: Int;
+}
+
+export interface Child extends Promise<ChildNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  pet_id: <T = Pet>() => T;
+  pet_name: () => Promise<String>;
+  pet_experience: () => Promise<Int>;
+  parent: <T = Parent>() => T;
+  foodEntries: <T = FragmentableArray<FoodEntryNode>>(
+    args?: {
+      where?: FoodEntryWhereInput;
+      orderBy?: FoodEntryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface ChildSubscription
+  extends Promise<AsyncIterator<ChildNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  pet_id: <T = PetSubscription>() => T;
+  pet_name: () => Promise<AsyncIterator<String>>;
+  pet_experience: () => Promise<AsyncIterator<Int>>;
+  parent: <T = ParentSubscription>() => T;
+  foodEntries: <T = Promise<AsyncIterator<FoodEntrySubscription>>>(
+    args?: {
+      where?: FoodEntryWhereInput;
+      orderBy?: FoodEntryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface ParentEdgeNode {
+  cursor: String;
+}
+
+export interface ParentEdge extends Promise<ParentEdgeNode>, Fragmentable {
+  node: <T = Parent>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ParentEdgeSubscription
+  extends Promise<AsyncIterator<ParentEdgeNode>>,
+    Fragmentable {
+  node: <T = ParentSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ChildSubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface ChildSubscriptionPayload
+  extends Promise<ChildSubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = Child>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ChildPreviousValues>() => T;
+}
+
+export interface ChildSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ChildSubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ChildSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ChildPreviousValuesSubscription>() => T;
+}
+
+export interface PetNode {
+  id: ID_Output;
+  species: String;
+  description: String;
+  happy: String;
+  ok: String;
+  sad: String;
+  sick: String;
+  eating: String;
+}
+
+export interface Pet extends Promise<PetNode>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  species: () => Promise<String>;
+  description: () => Promise<String>;
+  happy: () => Promise<String>;
+  ok: () => Promise<String>;
+  sad: () => Promise<String>;
+  sick: () => Promise<String>;
+  eating: () => Promise<String>;
+}
+
+export interface PetSubscription
+  extends Promise<AsyncIterator<PetNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  species: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  happy: () => Promise<AsyncIterator<String>>;
+  ok: () => Promise<AsyncIterator<String>>;
+  sad: () => Promise<AsyncIterator<String>>;
+  sick: () => Promise<AsyncIterator<String>>;
+  eating: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ChildPreviousValuesNode {
@@ -581,111 +1449,112 @@ export interface ChildPreviousValuesSubscription
   pet_experience: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ChildNode {
-  id: ID_Output;
-  name: String;
-  pet_name: String;
-  pet_experience: Int;
-}
-
-export interface Child extends Promise<ChildNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  pet_name: () => Promise<String>;
-  pet_experience: () => Promise<Int>;
-  parent: <T = Parent>() => T;
-}
-
-export interface ChildSubscription
-  extends Promise<AsyncIterator<ChildNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  pet_name: () => Promise<AsyncIterator<String>>;
-  pet_experience: () => Promise<AsyncIterator<Int>>;
-  parent: <T = ParentSubscription>() => T;
-}
-
-export interface ParentNode {
-  id: ID_Output;
-  name: String;
-  email: String;
-  username: String;
-  password: String;
-  pin: String;
-  img_url: String;
-}
-
-export interface Parent extends Promise<ParentNode>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  email: () => Promise<String>;
-  username: () => Promise<String>;
-  password: () => Promise<String>;
-  pin: () => Promise<String>;
-  img_url: () => Promise<String>;
-}
-
-export interface ParentSubscription
-  extends Promise<AsyncIterator<ParentNode>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  username: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  pin: () => Promise<AsyncIterator<String>>;
-  img_url: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ParentEdgeNode {
+export interface FoodEntryEdgeNode {
   cursor: String;
 }
 
-export interface ParentEdge extends Promise<ParentEdgeNode>, Fragmentable {
-  node: <T = Parent>() => T;
+export interface FoodEntryEdge
+  extends Promise<FoodEntryEdgeNode>,
+    Fragmentable {
+  node: <T = FoodEntry>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ParentEdgeSubscription
-  extends Promise<AsyncIterator<ParentEdgeNode>>,
+export interface FoodEntryEdgeSubscription
+  extends Promise<AsyncIterator<FoodEntryEdgeNode>>,
     Fragmentable {
-  node: <T = ParentSubscription>() => T;
+  node: <T = FoodEntrySubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ChildEdgeNode {
-  cursor: String;
-}
+export interface PetConnectionNode {}
 
-export interface ChildEdge extends Promise<ChildEdgeNode>, Fragmentable {
-  node: <T = Child>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface ChildEdgeSubscription
-  extends Promise<AsyncIterator<ChildEdgeNode>>,
-    Fragmentable {
-  node: <T = ChildSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface ParentConnectionNode {}
-
-export interface ParentConnection
-  extends Promise<ParentConnectionNode>,
+export interface PetConnection
+  extends Promise<PetConnectionNode>,
     Fragmentable {
   pageInfo: <T = PageInfo>() => T;
-  edges: <T = FragmentableArray<ParentEdgeNode>>() => T;
-  aggregate: <T = AggregateParent>() => T;
+  edges: <T = FragmentableArray<PetEdgeNode>>() => T;
+  aggregate: <T = AggregatePet>() => T;
 }
 
-export interface ParentConnectionSubscription
-  extends Promise<AsyncIterator<ParentConnectionNode>>,
+export interface PetConnectionSubscription
+  extends Promise<AsyncIterator<PetConnectionNode>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ParentEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateParentSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PetEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePetSubscription>() => T;
+}
+
+export interface ChildConnectionNode {}
+
+export interface ChildConnection
+  extends Promise<ChildConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = FragmentableArray<ChildEdgeNode>>() => T;
+  aggregate: <T = AggregateChild>() => T;
+}
+
+export interface ChildConnectionSubscription
+  extends Promise<AsyncIterator<ChildConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ChildEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateChildSubscription>() => T;
+}
+
+export interface FoodEntryPreviousValuesNode {
+  id: ID_Output;
+  name: String;
+  meal: String;
+  category: String;
+  date_added: String;
+  date_updated: String;
+}
+
+export interface FoodEntryPreviousValues
+  extends Promise<FoodEntryPreviousValuesNode>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  meal: () => Promise<String>;
+  category: () => Promise<String>;
+  date_added: () => Promise<String>;
+  date_updated: () => Promise<String>;
+}
+
+export interface FoodEntryPreviousValuesSubscription
+  extends Promise<AsyncIterator<FoodEntryPreviousValuesNode>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  meal: () => Promise<AsyncIterator<String>>;
+  category: () => Promise<AsyncIterator<String>>;
+  date_added: () => Promise<AsyncIterator<String>>;
+  date_updated: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FoodEntrySubscriptionPayloadNode {
+  mutation: MutationType;
+  updatedFields?: String[];
+}
+
+export interface FoodEntrySubscriptionPayload
+  extends Promise<FoodEntrySubscriptionPayloadNode>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FoodEntry>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FoodEntryPreviousValues>() => T;
+}
+
+export interface FoodEntrySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FoodEntrySubscriptionPayloadNode>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FoodEntrySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FoodEntryPreviousValuesSubscription>() => T;
 }
 
 export interface PageInfoNode {
@@ -711,30 +1580,81 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface ParentSubscriptionPayloadNode {
-  mutation: MutationType;
-  updatedFields?: String[];
+export interface AggregateParentNode {
+  count: Int;
 }
 
-export interface ParentSubscriptionPayload
-  extends Promise<ParentSubscriptionPayloadNode>,
+export interface AggregateParent
+  extends Promise<AggregateParentNode>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = Parent>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = ParentPreviousValues>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface ParentSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ParentSubscriptionPayloadNode>>,
+export interface AggregateParentSubscription
+  extends Promise<AsyncIterator<AggregateParentNode>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ParentSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ParentPreviousValuesSubscription>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AggregatePetNode {
+  count: Int;
+}
+
+export interface AggregatePet extends Promise<AggregatePetNode>, Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePetSubscription
+  extends Promise<AsyncIterator<AggregatePetNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AggregateFoodEntryNode {
+  count: Int;
+}
+
+export interface AggregateFoodEntry
+  extends Promise<AggregateFoodEntryNode>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFoodEntrySubscription
+  extends Promise<AsyncIterator<AggregateFoodEntryNode>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ParentConnectionNode {}
+
+export interface ParentConnection
+  extends Promise<ParentConnectionNode>,
+    Fragmentable {
+  pageInfo: <T = PageInfo>() => T;
+  edges: <T = FragmentableArray<ParentEdgeNode>>() => T;
+  aggregate: <T = AggregateParent>() => T;
+}
+
+export interface ParentConnectionSubscription
+  extends Promise<AsyncIterator<ParentConnectionNode>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ParentEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateParentSubscription>() => T;
 }
 
 export type Long = string;
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
+*/
+export type Int = number;
+
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
@@ -746,16 +1666,6 @@ export type ID_Output = string;
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
-
-/*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
-*/
-export type Int = number;
-
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
 
 /**
  * Type Defs

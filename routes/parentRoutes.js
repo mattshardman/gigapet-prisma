@@ -2,19 +2,6 @@ const { prisma } = require("../generated/prisma-client");
 
 const routes = require("express").Router();
 
-routes.get("/:id", async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const parent = await prisma.parent({
-            id
-        });
-        res.status(200).json(parent);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-});
-
 routes.post("/:id/child", async (req, res) => {
     const { id } = req.params;
     const { body } = req;
@@ -26,6 +13,11 @@ routes.post("/:id/child", async (req, res) => {
                 connect: {
                     id
                 }
+            },
+            pet_id: {
+                connect: {
+                    id: body.pet_id
+                }
             }
         });
 
@@ -34,6 +26,33 @@ routes.post("/:id/child", async (req, res) => {
         res.status(500).json({
             message: "Could not add child"
         });
+    }
+});
+
+routes.get("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const parentWithChildren = `
+        fragment ParentWithChildren on Parent {
+            id
+            name
+            email
+            username
+            img_url
+            children {
+                id
+                name
+                pet_name
+                pet_experience
+            }
+        }
+    `;
+
+    try {
+        const parent = await prisma.parent({ id }).$fragment(parentWithChildren);
+        res.status(200).json(parent);
+    } catch (error) {
+        res.status(500).json(error);
     }
 });
 

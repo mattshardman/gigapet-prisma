@@ -1,3 +1,14 @@
+type Pet {
+  id: ID! @id @unique
+  species: String!
+  description: String!
+  happy: String! @unique
+  ok: String!
+  sad: String!
+  sick: String!
+  eating: String!
+}
+
 type Parent {
   id: ID! @id @unique
   name: String!
@@ -6,14 +17,17 @@ type Parent {
   password: String!
   pin: String!
   img_url: String!
+  children: [Child]
 }
 
 type Child {
   id: ID! @id @unique
   name: String!
+  pet_id: Pet
   pet_name: String!
   pet_experience: Int!
-  parent: Parent @relation(link: INLINE)
+  parent: Parent
+  foodEntries: [FoodEntry]
 }
 
 type FoodEntry {
@@ -23,5 +37,5 @@ type FoodEntry {
   category: String!
   date_added: String!
   date_updated: String!
-  child_id: Child @relation(link: INLINE)
+  child: Child 
 }
